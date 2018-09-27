@@ -71,9 +71,6 @@ class ControllerScreen (val slave:DisplayScreen ){
             }
             textField.text = ""
         }
-
-
-
     }
 
     private fun update() {
