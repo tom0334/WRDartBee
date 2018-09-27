@@ -3,6 +3,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
+
 /**
  * Created by Tom on 27-9-2018.
  */
@@ -39,6 +40,22 @@ class DartGameTests {
     fun startWithUndo(){
         game.undoLast()
         Assert.assertEquals(START_SCORE, game.scoreLeft)
+    }
+
+/*    @Test
+    fun stressTest(){
+        val rand = Random()
+        for (i in 0..100000){
+            game.processNewScore(rand.nextInt(181))
+        }
+
+    }*/
+
+    @Test
+    fun testReadStates(){
+        val game = DartGame("DartLogs/testLog.txt")
+        Assert.assertEquals(1999800, game.scoreLeft)
+
     }
 
 

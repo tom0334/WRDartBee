@@ -1,10 +1,9 @@
-import java.awt.Button
-import java.awt.Color
-import java.awt.Dimension
+import java.awt.*
 import java.awt.event.ActionEvent
 import javax.swing.*
 import javax.swing.BoxLayout.X_AXIS
 import javax.swing.BoxLayout.Y_AXIS
+import javax.swing.border.Border
 
 
 /**
@@ -13,8 +12,11 @@ import javax.swing.BoxLayout.Y_AXIS
 class ControllerScreen (val slave:DisplayScreen ){
 
 
-    val dartGame: DartGame
-    val frame: JFrame
+    private val dartGame: DartGame
+    private val frame: JFrame
+
+    private lateinit var statusLabel: JLabel
+
 
     init {
         this.dartGame = DartGame()
@@ -38,33 +40,51 @@ class ControllerScreen (val slave:DisplayScreen ){
         addRightColumn(right)
         frame.add(right)
 
+
     }
 
     private fun addRightColumn(panel: JPanel){
-        panel.layout = BoxLayout(panel, Y_AXIS)
-        val b = Button("Button 1 ")
-        panel.add(b)
-        val b2 = Button("Button 2")
-        panel.add(b2)
-        val b3 = Button("Button 3")
-        panel.add(b3)
-        b.addActionListener { e ->
-            dartGame.processNewScore(10)
-            update()
+        panel.layout = GridLayout(2,1,10,10)
+        panel.border = BorderFactory.createEmptyBorder(20,20,20,20)
+
+        val undoButton = JButton("Undo turn")
+        panel.add(undoButton)
+
+        val fullscreenButton = JButton("Togle fullscreen")
+        panel.add(fullscreenButton)
+
+
+        fullscreenButton.addActionListener {
+            slave.toggleFulscreen()
+        }
+
+        undoButton.addActionListener {
+            val scoreBefore = dartGame.scoreLeft
+            dartGame.undoLast()
+            val undoneScore = dartGame.scoreLeft - scoreBefore
+            update( "Undo $undoneScore")
         }
     }
 
     private fun addLeftColumn(panel: JPanel){
         panel.layout = BoxLayout(panel, Y_AXIS)
+        panel.border = BorderFactory.createEmptyBorder(20,20,20,20)
+
+        val explanation = JLabel("Type score below, press enter to confirm", SwingConstants.CENTER)
+        panel.add(explanation)
         val textField = JTextField("",1)
+        textField.font = Font("Sans Serif", Font.BOLD, 50)
         panel.add(textField)
+
+
+        statusLabel = JLabel("")
+        panel.add(statusLabel)
 
         textField.addActionListener { ActionEvent ->
             try {
                 val score = textField.text.toString().toInt()
                 dartGame.processNewScore(score)
-                update()
-
+                update("score $score")
 
             }catch (e: Exception){
                 println("failed to parse")
@@ -73,8 +93,12 @@ class ControllerScreen (val slave:DisplayScreen ){
         }
     }
 
-    private fun update() {
+
+    private fun update(actionDescription: String) {
+        this.statusLabel.text = "Current score: ${dartGame.scoreLeft} Last action: $actionDescription"
+
         slave.setText( dartGame.scoreLeft)
+        println("Setting score to ${dartGame.scoreLeft}")
     }
 
     fun start (){
