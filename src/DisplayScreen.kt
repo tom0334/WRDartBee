@@ -1,12 +1,18 @@
-import java.awt.Color
-import java.awt.Font
-import java.awt.GridLayout
+import java.awt.*
 
 import java.awt.event.ActionListener
 import java.text.NumberFormat
 import java.util.*
 import javax.swing.*
 import javax.swing.Timer
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
+import java.io.File
+import javax.swing.JLabel
+
+
+
+
 
 
 /**
@@ -22,6 +28,7 @@ class DisplayScreen {
     lateinit var dartsThrown: JLabel
     lateinit var timeDarting: JLabel
     lateinit var lastTurn: JLabel
+    lateinit var scoreThrown: JLabel
 
     val frame: JFrame
 
@@ -36,9 +43,15 @@ class DisplayScreen {
         frame.add(panel)
         panel.layout = GridLayout(3,1)
 
-        val dartbeeText = JLabel("Powered by DartBee for Android", SwingConstants.CENTER  )
+
+
+        val promoPanel = JPanel()
+        panel.add(promoPanel)
+        createPromoView(promoPanel)
+
+/*        val dartbeeText = JLabel("Powered by DartBee for Android", SwingConstants.CENTER  )
         dartbeeText.font = Font("Sans Serif", Font.PLAIN, 25)
-        panel.add(dartbeeText)
+        panel.add(dartbeeText)*/
 
         this.scoreLabel = JLabel(START_SCORE.toString(), SwingConstants.CENTER)
         this.scoreLabel.font = Font("Sans Serif", Font.BOLD, 350)
@@ -60,28 +73,63 @@ class DisplayScreen {
 
     }
 
+    private fun createPromoView(panel: JPanel){
+        panel.layout = BoxLayout(panel,BoxLayout.Y_AXIS)
+
+
+        //create top left icon
+        val img = ImageIO.read(File("DartBee.png"))
+        val scaled =   img.getScaledInstance(614,282, Image.SCALE_DEFAULT)
+        val icon = ImageIcon(scaled)
+        val dartBeeIcon = JLabel(icon, SwingConstants.CENTER)
+
+        dartBeeIcon.alignmentX = Component.CENTER_ALIGNMENT
+        panel.add(dartBeeIcon)
+
+        val downloadText = JLabel("Download vandaag uw persoonlijke Darts Assistent, zoek naar DartBee in de Play Store!", SwingConstants.CENTER)
+        downloadText.font = Font("Sans Serif", Font.PLAIN, 25)
+        downloadText.alignmentX = Component.CENTER_ALIGNMENT
+        downloadText.border = BorderFactory.createEmptyBorder(20,0,0,0)
+
+        panel.add(downloadText )
+    }
+
 
     private fun createViewsInStatsPanel(statsPanel:JPanel){
-        statsPanel.layout = GridLayout(2,2)
+        //init layout
+        statsPanel.layout = GridBagLayout()
+        val c =  GridBagConstraints()
+        c.fill = GridBagConstraints.BOTH
 
-        averageLabel = JLabel("avg", SwingConstants.CENTER)
-        averageLabel.font = Font("Sans Serif", Font.PLAIN, 40)
+        fun GridBagConstraints.nextLine(){
+            this.gridy++
+            this.gridx = 0
+            c.weighty = 1.0
+            c.weightx = 1.0
+            c.gridwidth = 1
+        }
 
-        dartsThrown = JLabel("dartsThrown", SwingConstants.CENTER)
-        dartsThrown.font = Font("Sans Serif", Font.PLAIN, 40)
+        fun createLabel( textStyle: Int = Font.PLAIN, textSize: Int = 40): JLabel {
+            val label = JLabel("", SwingConstants.CENTER)
+            label.font = Font("Sans Serif", textStyle, textSize)
+            statsPanel.add(label,c)
+            c.gridx++ // increment gridx for the next label
+           return label
+        }
+        //top row, only one item
+        c.gridwidth = 2
+        scoreThrown = createLabel(Font.BOLD, 100)
+        c.nextLine()
+        c.nextLine()
 
-        lastTurn = JLabel("Last score", SwingConstants.CENTER)
-        lastTurn.font = Font("Sans Serif", Font.PLAIN, 40)
+        //midle row
+        averageLabel = createLabel()
+        dartsThrown = createLabel()
+        c.nextLine()
 
-
-        timeDarting = JLabel("timeDarting", SwingConstants.CENTER)
-        timeDarting.font = Font("Sans Serif", Font.PLAIN, 40)
-
-
-        statsPanel.add(averageLabel)
-        statsPanel.add(dartsThrown)
-        statsPanel.add(lastTurn)
-        statsPanel.add(timeDarting)
+        //botom row
+        lastTurn = createLabel()
+        timeDarting = createLabel()
     }
 
 
@@ -140,12 +188,16 @@ class DisplayScreen {
         setText( dartGame.scoreLeft)
         println("Setting score to ${dartGame.scoreLeft}")
 
+        scoreThrown.text = "${dartGame.scoreThrown}"
+
         val avg = if (dartGame.avg.isNaN()) 0f else dartGame.avg
         averageLabel.text = "Gemiddelde score: "+ "%.2f".format(avg)
 
         dartsThrown.text = "Aantal darts gegooid: ${dartGame.dartsThrown}"
 
         lastTurn.text = "Laatste score: ${dartGame.lastScore}"
+
+
     }
 }
 

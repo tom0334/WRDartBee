@@ -1,12 +1,11 @@
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
-import java.nio.Buffer
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.text.SimpleDateFormat
 import java.time.Duration
-import java.util.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Created by Tom on 25-9-2018.
@@ -32,7 +31,9 @@ class DartGame{
         )
         val loggerPath = findNewLoggerPath()
         this.writer = createWriter(loggerPath)
-        addAndLogState(startState)
+
+        states.add(startState)
+        loggButDontAddState(startState)
 
     }
     constructor(logFilePath: String){
@@ -44,12 +45,17 @@ class DartGame{
     val scoreLeft: Int get() = states.last().scoreLeft
     val turns : Int get() = states.last().turns
     val dartsThrown: Int get() = turns * 3
+    val scoreThrown: Int get() = START_SCORE - scoreLeft
 
     //Calculates the average. Startscore - scoreleft is the amount thrown so far
     val avg: Float get() = (START_SCORE - scoreLeft).toFloat() /  turns.toFloat()
 
     val timeSpent: String get() {
-        val millisSpent =  System.currentTimeMillis() - states.first().timeStamp
+        if (states.size <= 1){
+            return "00:00:00"
+        }
+
+        val millisSpent =  System.currentTimeMillis() - states[1].timeStamp
 
         var timeLeft = Duration.ofMillis(millisSpent)
 
@@ -65,7 +71,7 @@ class DartGame{
     val lastScore: Int get(){
         if (dartsThrown==0){return 0}
 
-        val prevRemPoints = states.get(states.lastIndex -1).scoreLeft
+        val prevRemPoints = states[states.lastIndex -1].scoreLeft
         return prevRemPoints - scoreLeft
     }
 
@@ -80,7 +86,8 @@ class DartGame{
                 newTurns,
                 System.currentTimeMillis()
         )
-        addAndLogState(newState)
+        states.add(newState)
+        loggButDontAddState(newState)
     }
 
 
@@ -89,7 +96,7 @@ class DartGame{
         if (states.lastIndex > 0){
             states.removeAt(states.lastIndex)
         }
-        addAndLogState(states.last())
+        loggButDontAddState(states.last())
     }
 
 
@@ -97,8 +104,7 @@ class DartGame{
 
 
 
-    private fun addAndLogState(newState: State) {
-        states.add(newState)
+    private fun loggButDontAddState(newState: State) {
         //write it to the log file
         writer.write(states.last().toString())
         writer.newLine()
@@ -129,17 +135,12 @@ class DartGame{
     /**
      * Finds a filename that is not used yet. In the form of DartLogs/logX.txt
      */
-    private fun findNewLoggerPath():String{
+    private fun findNewLoggerPath():String {
         //little helper function to create the file name.
-        fun toFileName(num: Int) = "$LOG_FOLDEN_NAME/log$num.txt"
-        var count = 0
-        //keep checking if the file with that number already exists.
-        do {
-            var file = File(toFileName(count))
-            count++
-        }
-        while (file.exists())
-        return toFileName(count)
+        val time =  LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd -- HH-:mm-ss-SSS"))
+        return "$LOG_FOLDEN_NAME/log$time.txt"
+
     }
 
     /**
