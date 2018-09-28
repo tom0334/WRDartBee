@@ -1,8 +1,12 @@
+import java.awt.Color
 import java.awt.Font
 import java.awt.GridLayout
 
 import java.awt.event.ActionListener
+import java.text.NumberFormat
+import java.util.*
 import javax.swing.*
+import javax.swing.Timer
 
 
 /**
@@ -10,9 +14,17 @@ import javax.swing.*
  */
 class DisplayScreen {
 
+    var currentShownValue:Int = START_SCORE
 
     val scoreLabel: JLabel
+
+    lateinit var averageLabel: JLabel
+    lateinit var dartsThrown: JLabel
+    lateinit var timeDarting: JLabel
+    lateinit var lastTurn: JLabel
+
     val frame: JFrame
+
 
     init {
         //Create and set up the window.
@@ -22,23 +34,61 @@ class DisplayScreen {
 
         val panel = JPanel()
         frame.add(panel)
-        panel.layout = GridLayout(2,1)
-
-        this.scoreLabel = JLabel(START_SCORE.toString(), SwingConstants.CENTER)
-        this.scoreLabel.font = Font("Sans Serif", Font.BOLD, 400)
-        panel.add(scoreLabel)
+        panel.layout = GridLayout(3,1)
 
         val dartbeeText = JLabel("Powered by DartBee for Android", SwingConstants.CENTER  )
-        dartbeeText.font = Font("Sans Serif", Font.BOLD, 25)
+        dartbeeText.font = Font("Sans Serif", Font.PLAIN, 25)
         panel.add(dartbeeText)
 
+        this.scoreLabel = JLabel(START_SCORE.toString(), SwingConstants.CENTER)
+        this.scoreLabel.font = Font("Sans Serif", Font.BOLD, 350)
+        panel.add(scoreLabel)
+
+        //A panel nested inside the main panel that has the stats
+        val statsPanel = JPanel()
+        statsPanel.border = BorderFactory.createEmptyBorder(20,20,20,20)
+        createViewsInStatsPanel(statsPanel)
+        panel.add(statsPanel)
+
+    }
+
+    fun startUpdatingTimer(dartGame: DartGame) {
+        val timer = Timer(16, ActionListener {
+            timeDarting.text = dartGame.timeSpent
+        })
+        timer.start()
+
+    }
+
+
+    private fun createViewsInStatsPanel(statsPanel:JPanel){
+        statsPanel.layout = GridLayout(2,2)
+
+        averageLabel = JLabel("avg", SwingConstants.CENTER)
+        averageLabel.font = Font("Sans Serif", Font.PLAIN, 40)
+
+        dartsThrown = JLabel("dartsThrown", SwingConstants.CENTER)
+        dartsThrown.font = Font("Sans Serif", Font.PLAIN, 40)
+
+        lastTurn = JLabel("Last score", SwingConstants.CENTER)
+        lastTurn.font = Font("Sans Serif", Font.PLAIN, 40)
+
+
+        timeDarting = JLabel("timeDarting", SwingConstants.CENTER)
+        timeDarting.font = Font("Sans Serif", Font.PLAIN, 40)
+
+
+        statsPanel.add(averageLabel)
+        statsPanel.add(dartsThrown)
+        statsPanel.add(lastTurn)
+        statsPanel.add(timeDarting)
     }
 
 
     fun start (){frame.isVisible = true}
 
     fun setText(score: Int) {
-        val original = scoreLabel.text.toInt()
+        val original = currentShownValue
         val toBeDone = (original - score)
 
         val absScoreDiff = Math.abs(toBeDone).toFloat()
@@ -48,9 +98,9 @@ class DisplayScreen {
 
         //counts what frame we currently are
         var currentFrame = 0
-        val timer = Timer(16, ActionListener { e ->
+        val timer = Timer(16, ActionListener {
             currentFrame++
-            val timer = (e.source as Timer)
+            val timer = (it.source as Timer)
             if (currentFrame > framesToDo) {
                 timer.stop()
             }
@@ -62,7 +112,8 @@ class DisplayScreen {
 
                 val shouldBeSubtracedNow = sineResult * toBeDone.toDouble()
                 val result =  original - shouldBeSubtracedNow.toInt()
-                this.scoreLabel.text = result.toString()
+                currentShownValue = result
+                this.scoreLabel.text =  NumberFormat.getNumberInstance(Locale.GERMANY).format(result)
             }
         })
         timer.start()
@@ -83,6 +134,18 @@ class DisplayScreen {
         //restart frame
         frame.isVisible= true
 
+    }
+
+    fun update(dartGame: DartGame) {
+        setText( dartGame.scoreLeft)
+        println("Setting score to ${dartGame.scoreLeft}")
+
+        val avg = if (dartGame.avg.isNaN()) 0f else dartGame.avg
+        averageLabel.text = "Gemiddelde score: "+ "%.2f".format(avg)
+
+        dartsThrown.text = "Aantal darts gegooid: ${dartGame.dartsThrown}"
+
+        lastTurn.text = "Laatste score: ${dartGame.lastScore}"
     }
 }
 

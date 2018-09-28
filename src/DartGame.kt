@@ -4,6 +4,9 @@ import java.io.FileWriter
 import java.nio.Buffer
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.util.*
 
 /**
  * Created by Tom on 25-9-2018.
@@ -37,16 +40,41 @@ class DartGame{
         this.writer = createWriter(logFilePath)
     }
 
+    //easy access properties
+    val scoreLeft: Int get() = states.last().scoreLeft
+    val turns : Int get() = states.last().turns
+    val dartsThrown: Int get() = turns * 3
 
+    //Calculates the average. Startscore - scoreleft is the amount thrown so far
+    val avg: Float get() = (START_SCORE - scoreLeft).toFloat() /  turns.toFloat()
 
-    val scoreLeft: Int
-        get() = states.last().scoreLeft
+    val timeSpent: String get() {
+        val millisSpent =  System.currentTimeMillis() - states.first().timeStamp
+
+        var timeLeft = Duration.ofMillis(millisSpent)
+
+        val hours = timeLeft.toHours()
+        timeLeft = timeLeft.minusHours(hours)
+        val minutes = timeLeft.toMinutes()
+        timeLeft = timeLeft.minusMinutes(minutes)
+        val seconds = timeLeft.seconds
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    val lastScore: Int get(){
+        if (dartsThrown==0){return 0}
+
+        val prevRemPoints = states.get(states.lastIndex -1).scoreLeft
+        return prevRemPoints - scoreLeft
+    }
+
 
 
     //adds a new score
     fun processNewScore(score: Int){
-        val newScore = states.last().scoreLeft - score
-        val newTurns = states.last().turns + 1
+        val newScore = scoreLeft - score
+        val newTurns = turns + 1
         val newState = State(
                 newScore,
                 newTurns,
@@ -68,6 +96,7 @@ class DartGame{
 
 
 
+
     private fun addAndLogState(newState: State) {
         states.add(newState)
         //write it to the log file
@@ -79,9 +108,9 @@ class DartGame{
     /**
      * reads the states from a previously written log file
      */
-    private fun readStates(path: String): MutableList<State>{
+    private fun readStates(pathString: String): MutableList<State>{
         //todo error handling
-        val path = Paths.get(path)
+        val path = Paths.get(pathString)
         val allLines = Files.readAllLines(path)
 
         val states:MutableList<State> = mutableListOf()
@@ -122,6 +151,8 @@ class DartGame{
         val writer = BufferedWriter(FileWriter(path,true))
         return writer
     }
+
+
 
 }
 

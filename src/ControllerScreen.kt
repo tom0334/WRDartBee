@@ -40,6 +40,9 @@ class ControllerScreen (val slave:DisplayScreen ){
         addRightColumn(right)
         frame.add(right)
 
+        update("-")
+        slave.startUpdatingTimer(dartGame)
+
 
     }
 
@@ -50,7 +53,7 @@ class ControllerScreen (val slave:DisplayScreen ){
         val undoButton = JButton("Undo turn")
         panel.add(undoButton)
 
-        val fullscreenButton = JButton("Togle fullscreen")
+        val fullscreenButton = JButton("Toggle fullscreen")
         panel.add(fullscreenButton)
 
 
@@ -96,9 +99,7 @@ class ControllerScreen (val slave:DisplayScreen ){
 
     private fun update(actionDescription: String) {
         this.statusLabel.text = "Current score: ${dartGame.scoreLeft} Last action: $actionDescription"
-
-        slave.setText( dartGame.scoreLeft)
-        println("Setting score to ${dartGame.scoreLeft}")
+        slave.update(this.dartGame)
     }
 
     fun start (){
