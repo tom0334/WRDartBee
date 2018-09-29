@@ -20,15 +20,14 @@ import javax.swing.JLabel
  */
 class DisplayScreen {
 
-    var currentShownValue:Int = START_SCORE
+    val scoreLabel: NumberJLabel
+    lateinit var scoreThrown: NumberJLabel
 
-    val scoreLabel: JLabel
+    lateinit var averageLabel: NumberJLabel
+    lateinit var dartsThrown: NumberJLabel
+    lateinit var timeDarting: NumberJLabel
+    lateinit var lastTurn: NumberJLabel
 
-    lateinit var averageLabel: JLabel
-    lateinit var dartsThrown: JLabel
-    lateinit var timeDarting: JLabel
-    lateinit var lastTurn: JLabel
-    lateinit var scoreThrown: JLabel
 
     val frame: JFrame
 
@@ -53,7 +52,7 @@ class DisplayScreen {
         dartbeeText.font = Font("Sans Serif", Font.PLAIN, 25)
         panel.add(dartbeeText)*/
 
-        this.scoreLabel = JLabel(START_SCORE.toString(), SwingConstants.CENTER)
+        this.scoreLabel = NumberJLabel(SwingConstants.CENTER, START_SCORE.toDouble(), "2.000.000")
         this.scoreLabel.font = Font("Sans Serif", Font.BOLD, 350)
         panel.add(scoreLabel)
 
@@ -95,13 +94,13 @@ class DisplayScreen {
     }
 
 
-    private fun createViewsInStatsPanel(statsPanel:JPanel){
+    private fun createViewsInStatsPanel(statsPanel:JPanel) {
         //init layout
         statsPanel.layout = GridBagLayout()
-        val c =  GridBagConstraints()
+        val c = GridBagConstraints()
         c.fill = GridBagConstraints.BOTH
 
-        fun GridBagConstraints.nextLine(){
+        fun GridBagConstraints.nextLine() {
             this.gridy++
             this.gridx = 0
             c.weighty = 1.0
@@ -109,12 +108,12 @@ class DisplayScreen {
             c.gridwidth = 1
         }
 
-        fun createLabel( textStyle: Int = Font.PLAIN, textSize: Int = 40): JLabel {
-            val label = JLabel("", SwingConstants.CENTER)
+        fun createLabel(textStyle: Int = Font.PLAIN, textSize: Int = 40): NumberJLabel {
+            val label = NumberJLabel(SwingConstants.CENTER)
             label.font = Font("Sans Serif", textStyle, textSize)
-            statsPanel.add(label,c)
+            statsPanel.add(label, c)
             c.gridx++ // increment gridx for the next label
-           return label
+            return label
         }
         //top row, only one item
         c.gridwidth = 2
@@ -132,40 +131,7 @@ class DisplayScreen {
         timeDarting = createLabel()
     }
 
-
     fun start (){frame.isVisible = true}
-
-    fun setText(score: Int) {
-        val original = currentShownValue
-        val toBeDone = (original - score)
-
-        val absScoreDiff = Math.abs(toBeDone).toFloat()
-        val uncappedFrames = (0.75 * absScoreDiff +30).toInt()
-        val framesToDo = Math.min(uncappedFrames, 1000/16)// cap max animation frames
-
-
-        //counts what frame we currently are
-        var currentFrame = 0
-        val timer = Timer(16, ActionListener {
-            currentFrame++
-            val timer = (it.source as Timer)
-            if (currentFrame > framesToDo) {
-                timer.stop()
-            }
-            else{
-                val done: Double = currentFrame.toDouble() / framesToDo.toDouble()
-                //the bigger a is, the steeper the function becomes in the midle.
-                val a : Double = 2.0
-                val sineResult: Double = (done.toThePowerOf(a)) / (done.toThePowerOf(a) + (1.0 - done).toThePowerOf(a))
-
-                val shouldBeSubtracedNow = sineResult * toBeDone.toDouble()
-                val result =  original - shouldBeSubtracedNow.toInt()
-                currentShownValue = result
-                this.scoreLabel.text =  NumberFormat.getNumberInstance(Locale.GERMANY).format(result)
-            }
-        })
-        timer.start()
-    }
 
     fun toggleFulscreen(){
         //for the undecorated thing to work, we need to dispose the entire frame to create it again later.
@@ -185,20 +151,30 @@ class DisplayScreen {
     }
 
     fun update(dartGame: DartGame) {
-        setText( dartGame.scoreLeft)
-        println("Setting score to ${dartGame.scoreLeft}")
+        //first do the number only ones
+        //this function formats a intermediate float to a nice rounded Int with points seperating thousands
+        val largeIntFormatter = fun (value:Double) = NumberFormat.getNumberInstance(Locale.GERMANY).format(value.round())
 
-        scoreThrown.text = "${dartGame.scoreThrown}"
+        scoreLabel.countWithAnimation(dartGame.scoreLeft.toDouble(), largeIntFormatter)
+        scoreThrown.countWithAnimation(dartGame.scoreThrown.toDouble(), largeIntFormatter)
 
+
+        //avg is a little harder, first take NAN into account
         val avg = if (dartGame.avg.isNaN()) 0f else dartGame.avg
-        averageLabel.text = "Gemiddelde score: "+ "%.2f".format(avg)
+        //format the float with some extra text
+        val avgFormatter = fun (value:Double) = "Gemiddelde score: "+ "%.2f".format(value)
+        averageLabel.countWithAnimation(avg.toDouble(), avgFormatter)
 
-        dartsThrown.text = "Aantal darts gegooid: ${dartGame.dartsThrown}"
+        //do the dartsthrown
+        val dartsThrownFormatter = fun (value:Double) = "Aantal darts gegooid: " +  NumberFormat.getNumberInstance(Locale.GERMANY).format(value.round())
+        dartsThrown.countWithAnimation(dartGame.dartsThrown.toDouble(), dartsThrownFormatter)
 
-        lastTurn.text = "Laatste score: ${dartGame.lastScore}"
-
+        val lastTurnFormatter = fun (value:Double)= "Laatste score: "+  NumberFormat.getNumberInstance(Locale.GERMANY).format(value.round())
+        lastTurn.countWithAnimation(dartGame.lastScore.toDouble(), lastTurnFormatter)
 
     }
+
+
 }
 
-fun Double.toThePowerOf(pow: Double) = Math.pow(this, pow)
+

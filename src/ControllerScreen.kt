@@ -7,42 +7,29 @@ import javax.swing.BoxLayout.Y_AXIS
 /**
  * Created by Tom on 25-9-2018.
  */
-class ControllerScreen (val slave:DisplayScreen ){
+class ControllerScreen(private val slave: DisplayScreen, private val dartGame: DartGame = DartGame()) {
 
-
-    private val dartGame: DartGame
     private val frame: JFrame
 
     private lateinit var statusLabel: JLabel
 
-
     init {
-        this.dartGame = DartGame()
-
-        //init frame
         frame = JFrame("Controller")
         frame.defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         frame.setSize(500, 200)
-
-        //init layout
         frame.layout = BoxLayout(frame.contentPane, X_AXIS)
-
-
         val left = JPanel()
-        left.setSize(200,200)
+        left.setSize(200, 200)
         addLeftColumn(left)
         frame.add(left)
-
         val right = JPanel()
-        right.setSize(200,200)
+        right.setSize(200, 200)
         addRightColumn(right)
         frame.add(right)
-
         update("-")
         slave.startUpdatingTimer(dartGame)
-
-
     }
+
 
     private fun addRightColumn(panel: JPanel){
         panel.layout = GridLayout(2,1,10,10)
@@ -103,8 +90,6 @@ class ControllerScreen (val slave:DisplayScreen ){
     fun start (){
         frame.isVisible = true
     }
-
-
 
 
 
