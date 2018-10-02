@@ -1,6 +1,3 @@
-import java.awt.event.ActionListener
-import java.text.NumberFormat
-import java.util.*
 import javax.swing.JLabel
 import javax.swing.Timer
 
@@ -57,6 +54,7 @@ class NumberJLabel(centering: Int, var currentShownValue: Double = 0.0, startTex
                 timer.stop()
                 //to avoid any rounding errors, update the text one more time
                 this.text = format(goal)
+                this.currentShownValue = goal
             }
             //update the value
             else {
