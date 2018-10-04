@@ -1,12 +1,15 @@
+/*
 
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
 
+*/
 /**
  * Created by Tom on 27-9-2018.
- */
+ *//*
+
 class DartGameTests {
 
     lateinit var game: DartGame
@@ -42,6 +45,7 @@ class DartGameTests {
         Assert.assertEquals(START_SCORE, game.scoreLeft)
     }
 
+*/
 /*    @Test
     fun stressTest(){
         val rand = Random()
@@ -49,7 +53,8 @@ class DartGameTests {
             game.processNewScore(rand.nextInt(181))
         }
 
-    }*/
+    }*//*
+
 
     @Test
     fun testReadStates(){
@@ -61,4 +66,4 @@ class DartGameTests {
 
 
 
-}
+}*/

@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter
  */
 class DartGame{
 
-
     private var writer: BufferedWriter
 
     private var states: MutableList<State>
@@ -22,9 +21,11 @@ class DartGame{
     constructor(){
         this.states = mutableListOf()
         val startState = State(
-                START_SCORE,
-                0,
-                System.currentTimeMillis()
+                scoreLeft = START_SCORE,
+                darts = 0,
+                turns = 0,
+                timeStamp = System.currentTimeMillis(),
+                pauseTime = 0
         )
         val loggerPath = findNewLoggerPath()
         this.writer = createWriter(loggerPath)
@@ -46,18 +47,19 @@ class DartGame{
     //easy access properties
     val scoreLeft: Int get() = states.last().scoreLeft
     val turns : Int get() = states.last().turns
-    val dartsThrown: Int get() = turns * 3
+    val dartsThrown: Int get() = states.last().darts
+
+    val pauseTime: Long get() = states.last().pauseTime
+
     val scoreThrown: Int get() = START_SCORE - scoreLeft
+
+
 
     //Calculates the average. Startscore - scoreleft is the amount thrown so far
     val avg: Float get() = (START_SCORE - scoreLeft).toFloat() /  turns.toFloat()
 
     val timeSpent: String get() {
-        if (states.size <= 1){
-            return "00:00:00"
-        }
-
-        val millisSpent =  System.currentTimeMillis() - states[1].timeStamp
+        val millisSpent = System.currentTimeMillis() - states.first().timeStamp - pauseTime
 
         var timeLeft = Duration.ofMillis(millisSpent)
 
@@ -80,23 +82,47 @@ class DartGame{
 
 
     //adds a new score
-    fun processNewScore(score: Int){
+    fun processNewScore(score: Int, numOfDarts: Int){
         val newScore = scoreLeft - score
+        val newDarts = dartsThrown + numOfDarts
         val newTurns = turns + 1
+
         val newState = State(
-                newScore,
-                newTurns,
-                System.currentTimeMillis()
+                scoreLeft = newScore,
+                darts = newDarts,
+                turns = newTurns,
+                timeStamp = System.currentTimeMillis(),
+                pauseTime = pauseTime
         )
         states.add(newState)
         loggButDontAddState(newState)
     }
 
 
+    fun addPause(timePassed:Long){
+        val newState =State(
+                    scoreLeft = scoreLeft,
+                    darts = dartsThrown,
+                    turns = turns,
+                    timeStamp = System.currentTimeMillis(),
+                    pauseTime = pauseTime +timePassed
+            )
+
+        states.add(newState)
+        loggButDontAddState(newState)
+        println("Current pausTime, $pauseTime")
+    }
+
+
+
     fun undoLast() {
         //DO NOT REMOVE THE FIRST STATE!
         if (states.lastIndex > 0){
+            val toBeRemoved = states.last()
             states.removeAt(states.lastIndex)
+            if (states.size > 0)
+                states.last().pauseTime = toBeRemoved.pauseTime
+
         }
         loggButDontAddState(states.last())
     }
@@ -108,7 +134,7 @@ class DartGame{
 
     private fun loggButDontAddState(newState: State) {
         //write it to the log file
-        writer.write(states.last().toString())
+        writer.write(newState.toString())
         writer.newLine()
         writer.flush()
     }
@@ -137,7 +163,8 @@ class DartGame{
                 //get the second value( at index 1), to get the propvalue. Then trim it to remove spaces
 
                 val values = keyValue.map { it.split("=")[1].trim() }
-                val result = State(values[0].toInt(), values[1].toInt(), values[2].toLong())
+
+                val result = State(values[0].toInt(), values[1].toInt(),values[2].toInt(), values[3].toLong(), values[4].toLong())
 
                 states[result.turns] = result
                 lastTurn = result.turns
@@ -177,6 +204,7 @@ class DartGame{
         val writer = BufferedWriter(FileWriter(path,true))
         return writer
     }
+
 
 
 }

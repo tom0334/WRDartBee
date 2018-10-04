@@ -65,13 +65,6 @@ class DisplayScreen {
 
     }
 
-    fun startUpdatingTimer(dartGame: DartGame) {
-        val timer = Timer(16, ActionListener {
-            timeDarting.text = dartGame.timeSpent
-        })
-        timer.start()
-
-    }
 
     private fun createPromoView(panel: JPanel){
         panel.layout = BoxLayout(panel,BoxLayout.Y_AXIS)
@@ -173,6 +166,12 @@ class DisplayScreen {
         val lastTurnFormatter = fun (value:Double)= "Laatste score: "+  NumberFormat.getNumberInstance(Locale.GERMANY).format(value.round())
         lastTurn.countWithAnimation(dartGame.lastScore.toDouble(), lastTurnFormatter)
 
+
+
+    }
+
+    fun updateTimer(dartGame: DartGame) {
+        timeDarting.text = dartGame.timeSpent
     }
 
 

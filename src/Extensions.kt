@@ -98,6 +98,6 @@ class NumberJLabel(centering: Int, var currentShownValue: Double = 0.0, startTex
 
 
 //Small Data Classes
-data class State(val scoreLeft: Int, val turns: Int, val timeStamp:Long){
-    override fun toString(): String = "Points = $scoreLeft, Turns = $turns, Timestamp = $timeStamp"
+data class State(val scoreLeft: Int, val darts:Int, val turns: Int, val timeStamp:Long, var pauseTime:Long){
+    override fun toString(): String = "Points = $scoreLeft, darts = $darts, Turns = $turns, Timestamp = $timeStamp, pauseTime = $pauseTime"
 }
