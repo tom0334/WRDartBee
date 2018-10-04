@@ -121,7 +121,7 @@ class DartGame{
             val toBeRemoved = states.last()
 
             states.removeAt(states.lastIndex)
-            
+
             //keep the time paused, you don't want that undone.
             if (states.size > 0)
                 states.last().pauseTime = toBeRemoved.pauseTime
@@ -193,7 +193,7 @@ class DartGame{
     private fun findNewLoggerPath():String {
         //little helper function to create the file name.
         val time =  LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyy-mm-dd--HH-mm-ss"))
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss"))
         return "$LOG_FOLDEN_NAME/log$time.txt"
 
     }
