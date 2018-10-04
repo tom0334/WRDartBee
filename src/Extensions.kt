@@ -1,15 +1,33 @@
+import java.awt.Image
+import java.awt.Toolkit
+import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.Timer
+
 
 //Constants
 val START_SCORE =  2000000
 val LOG_FOLDEN_NAME = "DartLogs"
 
 
+class Utils{
+
+    fun readImg(fileName: String): Image {
+        val resource = javaClass.classLoader.getResource("Images/" + fileName)
+        return Toolkit.getDefaultToolkit().getImage(resource)
+    }
+}
+
+
 
 //Extensions
 fun Double.toThePowerOf(pow: Double) = Math.pow(this, pow)
 fun Double.round(): Long = Math.round(this)
+
+fun JFrame.useDartBeeIcon(){
+    val img = Utils().readImg("appIcon.png")
+    this.iconImage = img
+}
 
 /**
  * This is an extension of Jlabel to allow for counting down.

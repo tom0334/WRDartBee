@@ -5,7 +5,6 @@ import java.text.NumberFormat
 import java.util.*
 import javax.swing.*
 import javax.swing.Timer
-import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import java.io.File
 import javax.swing.JLabel
@@ -34,9 +33,11 @@ class DisplayScreen {
 
     init {
         //Create and set up the window.
-        this.frame = JFrame("ScoreKeeper")
+        this.frame = JFrame("Score Keeper powered by DartBee")
         this.frame.setSize(1000, 1000)
         this.frame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
+
+        this.frame.useDartBeeIcon()
 
         val panel = JPanel()
         frame.add(panel)
@@ -77,7 +78,7 @@ class DisplayScreen {
 
 
         //create top left icon
-        val img = ImageIO.read(File("DartBee.png"))
+        val img = Utils().readImg("DartBee.png")
         val scaled =   img.getScaledInstance(614,282, Image.SCALE_DEFAULT)
         val icon = ImageIcon(scaled)
         val dartBeeIcon = JLabel(icon, SwingConstants.CENTER)

@@ -17,6 +17,7 @@ class ControllerScreen(private val slave: DisplayScreen, private val dartGame: D
         frame = JFrame("Controller")
         frame.defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
         frame.setSize(500, 200)
+        frame.useDartBeeIcon()
         frame.layout = BoxLayout(frame.contentPane, X_AXIS)
         val left = JPanel()
         left.setSize(200, 200)

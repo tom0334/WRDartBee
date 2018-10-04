@@ -10,6 +10,7 @@ object Main {
     @JvmStatic fun main(args: Array<String>) {
         //init frame
         val frame = JFrame("StartScreen")
+        frame.useDartBeeIcon()
         frame.setSize(500, 200)
 
         //init layout
