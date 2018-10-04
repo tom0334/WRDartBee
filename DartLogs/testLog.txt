@@ -1,5 +1,7 @@
-Points = 2000000, Turns = 0, Timestamp = 1538065592143
-Points = 1999950, Turns = 1, Timestamp = 1538065593916
-Points = 1999850, Turns = 2, Timestamp = 1538065603995
-Points = 1999950, Turns = 1, Timestamp = 1538065593916
-Points = 1999800, Turns = 2, Timestamp = 1538065608227
+Points = 2000000, darts = 0, Turns = 0, Timestamp = 1538663785867, pauseTime = 0
+Points = 2000000, darts = 0, Turns = 0, Timestamp = 1538663788009, pauseTime = 2112
+Points = 1999990, darts = 3, Turns = 1, Timestamp = 1538663789741, pauseTime = 2112
+Points = 1999940, darts = 6, Turns = 2, Timestamp = 1538663791341, pauseTime = 2112
+Points = 1999840, darts = 9, Turns = 3, Timestamp = 1538663792893, pauseTime = 2112
+Points = 1999940, darts = 6, Turns = 2, Timestamp = 1538663791341, pauseTime = 2112
+Points = 1999740, darts = 9, Turns = 3, Timestamp = 1538663820236, pauseTime = 2112
