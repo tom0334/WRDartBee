@@ -4,6 +4,11 @@ import javax.swing.JFileChooser
 import javax.swing.JFrame
 /**
  * Created by Tom on 25-9-2018.
+ *
+ * Main Object for running the program. It first creates the Welcome screen, that has 2 buttons on it. One to create a
+ * new game and one to read an existing one.
+ *
+ * It Also handles opening the file and providing it to the actual main program.
  */
 object Main {
 
@@ -28,11 +33,10 @@ object Main {
         })
 
         loadGameButton.addActionListener({
-
-
             val fc = JFileChooser()
-            val result = fc.showOpenDialog(frame)
 
+            //this opens a window that lets the user pick a file. It then returns when the user picked one.
+            val result = fc.showOpenDialog(frame)
             if (result == JFileChooser.APPROVE_OPTION){
                 val path = fc.selectedFile.absolutePath
                 println("Opening file $path")
@@ -48,7 +52,10 @@ object Main {
     }
 
 
-    fun startFresh(){
+    /**
+     * Starts a new game.
+     */
+    private fun startFresh(){
         val displayer = DisplayScreen()
         displayer.start()
 
@@ -56,7 +63,10 @@ object Main {
         secondScreen.start()
     }
 
-    fun startWithPreviousData(path: String) {
+    /**
+     * Uses previous data from a file to reopen the game.
+     */
+    private fun startWithPreviousData(path: String) {
         val game = DartGame(path)
 
         val displayer = DisplayScreen()
@@ -64,7 +74,6 @@ object Main {
 
         val secondScreen = ControllerScreen(displayer, game)
         secondScreen.start()
-
     }
 
 

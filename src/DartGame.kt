@@ -19,6 +19,12 @@ import java.time.format.DateTimeFormatter
  *
  */
 class DartGame{
+    //Constants. In  a companion object for 'static' access.
+    companion object {
+        val START_SCORE =  2000000
+        val LOG_FOLDEN_NAME = "DartLogs"
+    }
+
 
     //Writer that is used for the files after each action
     private var writer: BufferedWriter
@@ -199,27 +205,27 @@ class DartGame{
         val allLines = Files.readAllLines(path)
 
         //keep it in a array to easily edit by index.
-        //the index is essentially the turn value.
+        //This is needed, because of the way undo's work.
+        // when undoing, the value in the file is NOT overwritten. That means that we need to update a turn
+        //multiple times when it was undone and corrected.
         val states: Array<State?> = arrayOfNulls(allLines.size)
 
+        //keep track of which index was updated last so we can remove all turns after that one later.
+        //again, caused by the undo thing. When undoing, the line is NOT removed from the file. Since it was undone,
+        //it is not valid.
+        var lastTurnIndex= 0
 
-        var lastTurn= 0
-
+        //loop over indices, so we can print on which line an error occurred.
         for (i in allLines.indices){
             val line = allLines[i]
 
             try {
-                //split the line into a list of strings
-                val keyValue: List<String> = line.split(",")
-                //split on the equals sign, to get a PROPNAME and a PROPVALUE
-                //get the second value( at index 1), to get the propvalue. Then trim it to remove spaces
-
-                val values = keyValue.map { it.split("=")[1].trim() }
-
-                val result = State(values[0].toInt(), values[1].toInt(),values[2].toInt(), values[3].toLong(), values[4].toLong())
-
+                val result = State.fromString(line)
+                //the turns value is an index, it is incremented when a new turn is added.
                 states[result.turns] = result
-                lastTurn = result.turns
+
+                //just keep track of it by now
+                lastTurnIndex = result.turns
 
             }catch (e: Exception){
                 println("Something is wrong with line $i of the file. Continueing!")
@@ -230,10 +236,11 @@ class DartGame{
         }
 
         return states.indices
+                //remove the nulls from the list. They can appear when undo's are in the list.
                 .mapNotNull { states[it] }
-                .filter { it.turns <= lastTurn }
+                //remove the last turns that are later than the last one found
+                .filter { it.turns <= lastTurnIndex }
                 .toMutableList()
-
     }
 
     /**

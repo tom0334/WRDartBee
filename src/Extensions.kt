@@ -4,26 +4,13 @@ import javax.swing.JFrame
 import javax.swing.JLabel
 import javax.swing.Timer
 
-
-//Constants
-val START_SCORE =  2000000
-val LOG_FOLDEN_NAME = "DartLogs"
-
-
-class Utils{
-
-    fun readImg(fileName: String): Image {
-        val resource = javaClass.classLoader.getResource("Images/" + fileName)
-        return Toolkit.getDefaultToolkit().getImage(resource)
-    }
-}
-
-
-
-//Extensions
+//Simple fast extensions
 fun Double.toThePowerOf(pow: Double) = Math.pow(this, pow)
 fun Double.round(): Long = Math.round(this)
 
+/**
+ * This adds the icon to the top of the JFrame. It also works for the Windows Task bar.
+ */
 fun JFrame.useDartBeeIcon(){
     val img = Utils().readImg("appIcon.png")
     this.iconImage = img
@@ -32,16 +19,16 @@ fun JFrame.useDartBeeIcon(){
 /**
  * This is an extension of Jlabel to allow for counting down.
  *
- * The currentValue parameter is used to generate the animation. It is the startvalue when passed to the constructor.
+ * @param currentShownValue used to generate the animation. It is the startvalue when passed to the constructor.
  *
- * The startText is the text to show before calling any function that sets the text.
+ * @param startText  the text to show before calling any function that sets the text.
  *
  */
 class NumberJLabel(centering: Int, var currentShownValue: Double = 0.0, startText: String= "") : JLabel(startText, centering) {
 
     /**
      * This makes the label text count down or up to the goal value. The value is updated every 16 milliseconds,
-     * aprox. 16 fps.
+     * aprox. 60 fps.
      *
      * @param goal the number to move towards. It may take a while before this value is actually displayed.
      * @param format a function that maps the current number that needs to be shown to the actual text you want
@@ -96,8 +83,40 @@ class NumberJLabel(centering: Int, var currentShownValue: Double = 0.0, startTex
     }
 }
 
-
-//Small Data Classes
+/**
+ * A small data class that just keeps the states.
+ */
 data class State(val scoreLeft: Int, val darts:Int, val turns: Int, val timeStamp:Long, var pauseTime:Long){
+    /**
+     * Important! This is used to generate the file on the disk. It can be read back, and that means it is sensitive to changes.
+     */
     override fun toString(): String = "Points = $scoreLeft, darts = $darts, Turns = $turns, Timestamp = $timeStamp, pauseTime = $pauseTime"
+
+    companion object {
+        fun fromString(line: String): State  {
+            //split the line into a list of strings
+            val keyValue: List<String> = line.split(",")
+
+            //split on the equals sign, to get a PROPNAME and a PROPVALUE
+            //get the second value( at index 1), to get the propvalue. Then trim it to remove spaces
+            val values = keyValue.map { it.split("=")[1].trim() }
+            return State(
+                    values[0].toInt(),
+                    values[1].toInt(),
+                    values[2].toInt(),
+                    values[3].toLong(),
+                    values[4].toLong())
+        }
+    }
+}
+
+/**
+ * This inside a class, since the .javaClass.Classloader does not work the way you would expect it to when it is a
+ * separate function or when you pass another random object to it to use for context.
+ */
+class Utils{
+    fun readImg(fileName: String): Image {
+        val resource = javaClass.classLoader.getResource("Images/" + fileName)
+        return Toolkit.getDefaultToolkit().getImage(resource)
+    }
 }
