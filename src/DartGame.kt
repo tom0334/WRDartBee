@@ -9,15 +9,28 @@ import java.time.format.DateTimeFormatter
 /**
  * Created by Tom on 25-9-2018.
  *
+ * A class that represents a DartGame. It is built for performance with very large games. It has only O(1) functions.
  *
+ * It works using the concept of a state, that is written to a file for backup purposes after every turn.(
+ * Scores are input per turn, NOT per dart)
+ *
+ *It can also read back a file that was written to previously. It will then create a new file with the -m suffix,
+ * where it will write its modified version to.
  *
  */
 class DartGame{
 
+    //Writer that is used for the files after each action
     private var writer: BufferedWriter
 
+    //Main list of states. Keep in mind that this is NOT equal to what is stored on the disk necessarily,
+    //as that contains the undone states as wel.
     private var states: MutableList<State>
 
+    /**
+     * Primary constructor for creating a new game. It inserts a empty state at the start of the game and writes it to
+     * the file.
+     */
     constructor(){
         this.states = mutableListOf()
         val startState = State(
@@ -32,8 +45,13 @@ class DartGame{
 
         states.add(startState)
         loggButDontAddState(startState)
-
     }
+
+    /**
+     * Secondary constructor for use when restoring from a file.
+     *
+     * @param logFilePath the path to the file,
+     */
     constructor(logFilePath: String){
         this.states = readStates(logFilePath)
 
@@ -44,20 +62,28 @@ class DartGame{
         this.writer = createWriter(newName)
     }
 
-    //easy access properties
+    /**
+     * Below are a few shortcuts to the last state for easier access. These are public.
+     */
     val scoreLeft: Int get() = states.last().scoreLeft
     val turns : Int get() = states.last().turns
     val dartsThrown: Int get() = states.last().darts
-
     val pauseTime: Long get() = states.last().pauseTime
 
+    //This returns the total score thrown over the entire game
     val scoreThrown: Int get() = START_SCORE - scoreLeft
 
-
-
-    //Calculates the average. Startscore - scoreleft is the amount thrown so far
+    /**
+    * *returns the TURN average. This means that when throwing with more than 3 darts, the average is higher than
+    *normally when darting
+    */
     val avg: Float get() = (START_SCORE - scoreLeft).toFloat() /  turns.toFloat()
 
+    /**
+     * Returns the time spent in total formatted as HH:MM:SS, keeping in mind the pauses that were taken. To add a pause,
+     * see the addPause function.
+     *
+     */
     val timeSpent: String get() {
         val millisSpent = System.currentTimeMillis() - states.first().timeStamp - pauseTime
 
@@ -72,6 +98,9 @@ class DartGame{
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    /**
+     * Returns the last score that was thrown by the player. Returns 0 if there is no score yet.
+     */
     val lastScore: Int get(){
         if (dartsThrown==0){return 0}
 
@@ -80,8 +109,13 @@ class DartGame{
     }
 
 
-
-    //adds a new score
+    /**
+     * This adds a new score to this game. It does so by adding the new state to the states list, and then logging
+     * that to the file.
+     * @param score the total score that was thrown this turn.
+     * @param numOfDarts the amount of darts used this turn. This can change, as the player can attempt to use more
+     * darts after the first WR is achieved.
+     */
     fun processNewScore(score: Int, numOfDarts: Int){
         val newScore = scoreLeft - score
         val newDarts = dartsThrown + numOfDarts
@@ -98,7 +132,12 @@ class DartGame{
         loggButDontAddState(newState)
     }
 
-
+    /**
+     * This notifies the game of a pause. This class does NOT keep track of that itself, and it needs to be notified
+     * by using this function.
+     *
+     * @param timePassed the time passed in millis during the pause. This will be subtracted from the time spent darting
+     */
     fun addPause(timePassed:Long){
         val newState =State(
                     scoreLeft = scoreLeft,
@@ -114,10 +153,16 @@ class DartGame{
     }
 
 
-
+    /**
+     * This removes the last state from the list, to effectively undo the last score. It then writes the last state to
+     * the file.
+     *
+     * When undoing, the pausetime is preserved. It would be weird if you can undo time.
+     */
     fun undoLast() {
         //DO NOT REMOVE THE FIRST STATE!
         if (states.lastIndex > 0){
+            //save it to restore the pausetime
             val toBeRemoved = states.last()
 
             states.removeAt(states.lastIndex)
@@ -131,10 +176,11 @@ class DartGame{
     }
 
 
-
-
-
-
+    /**
+     * Uses the bufferedWriter to write the newstate to the file.
+     *
+     * @param newState the state to write
+     */
     private fun loggButDontAddState(newState: State) {
         //write it to the log file
         writer.write(newState.toString())
@@ -144,6 +190,9 @@ class DartGame{
 
     /**
      * reads the states from a previously written log file
+     *
+     * @param pathString a string representing the path to the file to read. This string is provided by the java swing
+     * filepicker.
      */
     private fun readStates(pathString: String): MutableList<State>{
         val path = Paths.get(pathString)
