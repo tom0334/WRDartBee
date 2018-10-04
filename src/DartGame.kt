@@ -119,7 +119,10 @@ class DartGame{
         //DO NOT REMOVE THE FIRST STATE!
         if (states.lastIndex > 0){
             val toBeRemoved = states.last()
+
             states.removeAt(states.lastIndex)
+            
+            //keep the time paused, you don't want that undone.
             if (states.size > 0)
                 states.last().pauseTime = toBeRemoved.pauseTime
 

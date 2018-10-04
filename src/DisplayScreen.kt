@@ -1,12 +1,7 @@
 import java.awt.*
-
-import java.awt.event.ActionListener
 import java.text.NumberFormat
 import java.util.*
 import javax.swing.*
-import javax.swing.Timer
-import javax.imageio.ImageIO
-import java.io.File
 import javax.swing.JLabel
 
 
@@ -62,7 +57,6 @@ class DisplayScreen {
         statsPanel.border = BorderFactory.createEmptyBorder(20,20,20,20)
         createViewsInStatsPanel(statsPanel)
         panel.add(statsPanel)
-
     }
 
 
@@ -80,7 +74,7 @@ class DisplayScreen {
         panel.add(dartBeeIcon)
 
         val downloadText = JLabel("Download vandaag uw persoonlijke Darts assistent, zoek naar DartBee in de Play Store!", SwingConstants.CENTER)
-        downloadText.font = Font("Sans Serif", Font.PLAIN, 25)
+        downloadText.font = Font("Sans Serif", Font.PLAIN, 32)
         downloadText.alignmentX = Component.CENTER_ALIGNMENT
         downloadText.border = BorderFactory.createEmptyBorder(10,0,0,0)
 
@@ -165,9 +159,6 @@ class DisplayScreen {
 
         val lastTurnFormatter = fun (value:Double)= "Laatste score: "+  NumberFormat.getNumberInstance(Locale.GERMANY).format(value.round())
         lastTurn.countWithAnimation(dartGame.lastScore.toDouble(), lastTurnFormatter)
-
-
-
     }
 
     fun updateTimer(dartGame: DartGame) {

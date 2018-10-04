@@ -45,10 +45,10 @@ class ControllerScreen(private val slave: DisplayScreen, private val dartGame: D
 
         //craete the paused panel
         this.pausedPanel = JPanel()
-        pausedPanel.layout = BoxLayout(pausedPanel, X_AXIS)
-        val resumeButton =  JButton("Resume")
+        pausedPanel.layout = GridBagLayout()
+        val resumeButton =  JButton("Resume/Start Game")
         resumeButton.addActionListener({togglePause()})
-        pausedPanel.add(resumeButton)
+        pausedPanel.add(resumeButton,GridBagConstraints())
 
 
         frame.add(pausedPanel)
@@ -60,6 +60,10 @@ class ControllerScreen(private val slave: DisplayScreen, private val dartGame: D
                 slave.updateTimer(dartGame)
             }
         }).start()
+
+        //update with inital values
+        slave.updateTimer(dartGame)
+        slave.update(dartGame)
 
     }
 
@@ -133,7 +137,7 @@ class ControllerScreen(private val slave: DisplayScreen, private val dartGame: D
         panel.add(scoreTextField)
 
 
-        statusLabel = JLabel("")
+        statusLabel = JLabel(" ")
         panel.add(statusLabel)
 
         scoreTextField.addActionListener { ActionEvent ->
