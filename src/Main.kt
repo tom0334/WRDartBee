@@ -44,7 +44,9 @@ object Main {
                 frame.isVisible = false
             }
             else{
-                println("Not approved")
+                //Nothing happens when the file was not approved. The window chooser window just closes,
+                //and the user can try again.
+                println("File not selected!")
             }
         })
 

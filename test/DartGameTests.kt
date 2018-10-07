@@ -4,8 +4,9 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-//Unuesed if the stresstest is commented out
 
+//Unuesed if the stresstest is commented out
+import java.util.Random
 
 /**
  *Created by Tom on 27-9-2018.
