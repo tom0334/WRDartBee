@@ -4,6 +4,7 @@ This application was used for the a world record attempt to beat the longest dar
 The score goal of 2 million points was never reached, but the time goal of 60 hours was easily reached.
 More information (in dutch) here:
 https://www.rtvdrenthe.nl/nieuws/139529/Wereldrecord-Frank-Posthumus-dart-ruim-zestig-uur-non-stop
+
 https://www.ad.nl/binnenland/frank-37-wil-record-darten-verbreken-moet-minstens-30-000-keer-gooien~acb0d75a/
 
 **The program**
