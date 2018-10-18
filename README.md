@@ -8,9 +8,13 @@ https://www.rtvdrenthe.nl/nieuws/139529/Wereldrecord-Frank-Posthumus-dart-ruim-z
 
 https://www.ad.nl/binnenland/frank-37-wil-record-darten-verbreken-moet-minstens-30-000-keer-gooien~acb0d75a/
 
+![Program in action](images/WRDartBee.jpg)
+
 **The program**
 
-When the application is in use, it shows 2 windows. One window, called the DisplayScreen, is used to show the score to all spectators. It also shows some statistics, like the average score, amount of darts thrown, etc. The other window, called the ControllerScreen, is operated by the score counter. This windows contains all the controls to enter new scores and to pause/resume the game. It is never visible to spectators. 
+When the application is in use, it shows 2 windows. One window, called the DisplayScreen, is used to show the score to all spectators. It also shows some statistics, like the average score, amount of darts thrown, etc. The other window, called the ControllerScreen, is operated by the score counter. This windows contains all the controls to enter new scores and to pause/resume the game. It is never visible to spectators.
+
+![The ControllerScreen](images/controllerScreen.png)
 
 **Saving data**
 
