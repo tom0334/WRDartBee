@@ -23,3 +23,23 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+
+/**
+ *RUN THIS TASK TO CREATE A JAR FILE.
+ * it will be placed in build/libs
+ */
+task uberJar(type: Jar) {
+    archiveClassifier = 'uber'
+
+    manifest {
+        attributes "Main-Class": "Main"
+    }
+
+    from sourceSets.main.output
+
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+}
