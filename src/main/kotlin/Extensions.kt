@@ -116,7 +116,7 @@ data class State(val scoreLeft: Int, val darts:Int, val turns: Int, val timeStam
  */
 class Utils{
     fun readImg(fileName: String): Image {
-        val resource = javaClass.classLoader.getResource("Images/" + fileName)
+        val resource = javaClass.classLoader.getResource("./" + fileName)
         return Toolkit.getDefaultToolkit().getImage(resource)
     }
 }
