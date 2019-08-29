@@ -114,7 +114,7 @@ class DisplayScreen {
         }
         //top row, only one item
         c.gridwidth = 2
-        scoreThrown = createLabel(Font.BOLD, 100)
+        //scoreThrown = createLabel(Font.BOLD, 100)
         c.nextLine()
         //add some extra space
         c.nextLine()
@@ -164,7 +164,7 @@ class DisplayScreen {
         val largeIntFormatter = fun (value:Double) = NumberFormat.getNumberInstance(Locale.GERMANY).format(value.round())
 
         scoreLabel.countWithAnimation(dartGame.scoreLeft.toDouble(), largeIntFormatter)
-        scoreThrown.countWithAnimation(dartGame.scoreThrown.toDouble(), largeIntFormatter)
+        //scoreThrown.countWithAnimation(dartGame.scoreThrown.toDouble(), largeIntFormatter)
 
 
         //avg is a little harder, first take NAN into account

@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter
 class DartGame{
     //Constants. In  a companion object for 'static' access.
     companion object {
-        val START_SCORE =  2000000
+        val START_SCORE =  0
         val LOG_FOLDEN_NAME = "DartLogs"
     }
 
@@ -83,7 +83,7 @@ class DartGame{
     * *returns the TURN average. This means that when throwing with more than 3 darts, the average is higher than
     *normally when darting
     */
-    val avg: Float get() = (START_SCORE - scoreLeft).toFloat() /  turns.toFloat()
+    val avg: Float get() = (scoreLeft).toFloat() /  turns.toFloat()
 
     /**
      * Returns the time spent in total formatted as HH:MM:SS, keeping in mind the pauses that were taken. To add a pause,
@@ -111,7 +111,7 @@ class DartGame{
         if (dartsThrown==0){return 0}
 
         val prevRemPoints = states[states.lastIndex -1].scoreLeft
-        return prevRemPoints - scoreLeft
+        return  scoreLeft - prevRemPoints
     }
 
 
@@ -123,7 +123,7 @@ class DartGame{
      * darts after the first WR is achieved.
      */
     fun processNewScore(score: Int, numOfDarts: Int){
-        val newScore = scoreLeft - score
+        val newScore = scoreLeft + score
         val newDarts = dartsThrown + numOfDarts
         val newTurns = turns + 1
 
