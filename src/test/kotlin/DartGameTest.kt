@@ -1,4 +1,3 @@
-
 import DartGame.Companion.START_SCORE
 import org.junit.Assert
 import org.junit.Before
@@ -14,19 +13,17 @@ import java.util.Random
  * Contains some basic unit tests for the DartGame class.
  *
  * It also has a stresstest that is normally commented out.
-*/
+ */
 
 class DartGameTests {
 
-    //DO NOT RUN THIS NORMALLY!
-
+    //DO NOT RUN THIS NORMALLY, it is a performance test!
 /*    @Test
     fun stressTest(){
         val rand = Random()
         for (i in 0..100000){
             freshGame.processNewScore(rand.nextInt(181))
         }
-
     }*/
 
 
