@@ -73,7 +73,7 @@ class DisplayScreen {
         dartBeeIcon.alignmentX = Component.CENTER_ALIGNMENT
         panel.add(dartBeeIcon)
 
-        val downloadText = JLabel("Powered by DartBee for Android, uw persoonlijke Darts assistent op uw telefoon.", SwingConstants.CENTER)
+        val downloadText = JLabel("Powered by DartBee for Android. Gratis persoonlijke Darts assistent, rechtstreeks op uw telefoon!", SwingConstants.CENTER)
         downloadText.font = Font("Sans Serif", Font.PLAIN, 32)
         downloadText.alignmentX = Component.CENTER_ALIGNMENT
         downloadText.border = BorderFactory.createEmptyBorder(10,0,0,0)
