@@ -1,11 +1,13 @@
 # WRDartBee
-This application was used for the a world record attempt to beat the longest darts marathon. Starting on 05-11-2018, Frank Posthumus played darts for 65 hours and 20 minutes, with only five minute breaks every hour. 
 
-The score goal of 2 million points was never reached, but the time goal of 60 hours was easily reached.
-More information (in dutch) here:
+This application was used for multiple world record attempts for the longest darts marathon. It was used by Frank Posthumus first, and a modified version was used for the succesfull attempt of Raymond Brink (72 hours!).
 
+More information on both attempts:
+Raymond's attempt:
+https://www.rtl7darts.nl/nieuws/3027/fries_dart_72_uur_voor_goede_doel_en_pak/
+
+Franks attempt:
 https://www.rtvdrenthe.nl/nieuws/139529/Wereldrecord-Frank-Posthumus-dart-ruim-zestig-uur-non-stop
-
 https://www.ad.nl/binnenland/frank-37-wil-record-darten-verbreken-moet-minstens-30-000-keer-gooien~acb0d75a/
 
 ![Program in action](images/WRDartBee.jpg)
